@@ -28,6 +28,16 @@ var palette_master = []RGB {
     {156, 232, 232}, {157, 242, 209}, {177, 244, 191}, {205, 245, 183},
     {238, 240, 183}, {190, 190, 190}, {  0,   0,   0}, {  0,   0,   0} }
 
+func print_master() {
+    fmt.Println(palette_master[0x11])
+    for i := 0; i < 4; i++ {
+        for j := 0; j < 16; j++ {
+            fmt.Print(palette_master[i*16+j])
+            fmt.Print(" ")
+        }
+        fmt.Println()
+    }
+}
 
 func main() {
 
