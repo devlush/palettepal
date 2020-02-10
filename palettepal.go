@@ -28,6 +28,16 @@ var palette_master = []RGB {
     {156, 232, 232}, {157, 242, 209}, {177, 244, 191}, {205, 245, 183},
     {238, 240, 183}, {190, 190, 190}, {  0,   0,   0}, {  0,   0,   0} }
 
+
+func blend_rms(p, q RGB) RGB {
+
+    v := RGB{}
+    v.R = ( (p.R * p.R) + (q.R * q.R) ) / 2
+    v.G = ( (p.G * p.G) + (q.G * q.G) ) / 2
+    v.B = ( (p.B * p.B) + (q.B * q.B) ) / 2
+    return v
+}
+
 func print_master() {
     fmt.Println(palette_master[0x11])
     for i := 0; i < 4; i++ {
@@ -40,6 +50,10 @@ func print_master() {
 }
 
 func main() {
+
+    pm := palette_master
+    t1 := rms( (*pm)[0x11], (*pm)[0x12] )
+    t2 := rms( (*pm)[0x28], (*pm)[0x03] )
 
     fmt.Println(palette_master[0x11].B)
 }
