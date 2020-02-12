@@ -1,7 +1,10 @@
 
 package main
 
-import "fmt"
+import (
+    "fmt"
+    "math"
+)
 
 type RGB struct {
     R, G, B uint8
@@ -29,12 +32,22 @@ var palette_master = []RGB {
     {238, 240, 183}, {190, 190, 190}, {  0,   0,   0}, {  0,   0,   0} }
 
 
-func blend_rms(p, q RGB) RGB {
+func rms(x, y uint8) uint8 {
+    xf := float64(x)
+    yf := float64(y)
 
+    xfs := math.Pow(xf, 2)
+    yfs := math.Pow(yf, 2)
+
+    res := math.Sqrt( (xfs + yfs ) / 2 )
+    return uint8( math.Round(res) )
+}
+
+func blend(p, q RGB) RGB {
     v := RGB{}
-    v.R = ( (p.R * p.R) + (q.R * q.R) ) / 2
-    v.G = ( (p.G * p.G) + (q.G * q.G) ) / 2
-    v.B = ( (p.B * p.B) + (q.B * q.B) ) / 2
+    v.R = rms(p.R, q.R)
+    v.G = rms(p.G, q.G)
+    v.B = rms(p.B, q.B)
     return v
 }
 
@@ -51,10 +64,13 @@ func print_master() {
 
 func main() {
 
-    pm := palette_master
-    t1 := rms( (*pm)[0x11], (*pm)[0x12] )
-    t2 := rms( (*pm)[0x28], (*pm)[0x03] )
+    pm := &palette_master
+    t1 := blend( (*pm)[0x11], (*pm)[0x12] )
+    t2 := blend( (*pm)[0x28], (*pm)[0x03] )
 
     fmt.Println(palette_master[0x11].B)
+    fmt.Println(t1)
+    fmt.Println(t2)
+
 }
 
