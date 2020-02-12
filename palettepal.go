@@ -31,6 +31,15 @@ var palette_master = []RGB {
     {156, 232, 232}, {157, 242, 209}, {177, 244, 191}, {205, 245, 183},
     {238, 240, 183}, {190, 190, 190}, {  0,   0,   0}, {  0,   0,   0} }
 
+var palette_ultra = [64][64]RGB {}
+
+func build_ultra() {
+    for i, ci := range palette_master {
+        for j, cj := range palette_master {
+            palette_ultra[i][j] = blend(ci, cj)
+        }
+    }
+}
 
 func rms(x, y uint8) uint8 {
     xf := float64(x)
@@ -68,9 +77,13 @@ func main() {
     t1 := blend( (*pm)[0x11], (*pm)[0x12] )
     t2 := blend( (*pm)[0x28], (*pm)[0x03] )
 
+    build_ultra()
+
     fmt.Println(palette_master[0x11].B)
     fmt.Println(t1)
     fmt.Println(t2)
 
+    fmt.Println(palette_ultra[0x11][0x12])
+    fmt.Println(palette_ultra[0x28][0x03])
 }
 
