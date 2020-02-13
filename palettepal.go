@@ -10,7 +10,7 @@ type RGB struct {
     R, G, B uint8
 }
 
-var palette_master = []RGB {
+var palette_unsat_v6 = []RGB {
     {107, 107, 107}, {135,  30,   0}, {150,  11,  31}, {135,  12,  59},
     { 97,  13,  89}, { 40,   5,  94}, {  0,  17,  85}, {  0,  27,  70},
     {  0,  50,  48}, {  0,  72,  10}, {  0,  78,   0}, { 25,  70,   0},
@@ -34,8 +34,8 @@ var palette_master = []RGB {
 var palette_ultra = [64][64]RGB {}
 
 func build_ultra() {
-    for i, ci := range palette_master {
-        for j, cj := range palette_master {
+    for i, ci := range palette_unsat_v6 {
+        for j, cj := range palette_unsat_v6 {
             palette_ultra[i][j] = blend(ci, cj)
         }
     }
@@ -61,10 +61,10 @@ func blend(p, q RGB) RGB {
 }
 
 func print_master() {
-    fmt.Println(palette_master[0x11])
+    fmt.Println(palette_unsat_v6[0x11])
     for i := 0; i < 4; i++ {
         for j := 0; j < 16; j++ {
-            fmt.Print(palette_master[i*16+j])
+            fmt.Print(palette_unsat_v6[i*16+j])
             fmt.Print(" ")
         }
         fmt.Println()
@@ -73,13 +73,13 @@ func print_master() {
 
 func main() {
 
-    pm := &palette_master
+    pm := &palette_unsat_v6
     t1 := blend( (*pm)[0x11], (*pm)[0x12] )
     t2 := blend( (*pm)[0x28], (*pm)[0x03] )
 
     build_ultra()
 
-    fmt.Println(palette_master[0x11].B)
+    fmt.Println(palette_unsat_v6[0x11].B)
     fmt.Println(t1)
     fmt.Println(t2)
 
