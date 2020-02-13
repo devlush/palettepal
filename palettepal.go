@@ -41,6 +41,23 @@ func build_ultra() {
     }
 }
 
+func distill(a, b [16]uint8, filter *map[uint16]bool) {
+
+    virt_palette := [256]uint16 {}
+    for i := 0; i < 16; i++ {
+        for j := 0; j < 16; j++ {
+            left := uint16(a[i]) << 8
+            right := uint16(b[j])
+            virt_palette[i*16+j] = left | right
+        }
+    }
+    for _, cc := range virt_palette {
+        if (*filter)[cc] {
+            fmt.Printf(" %04x\n", cc)
+        }
+    }
+}
+
 func rms(x, y uint8) uint8 {
     xf := float64(x)
     yf := float64(y)
@@ -73,17 +90,20 @@ func print_master() {
 
 func main() {
 
-    pm := &palette_unsat_v6
-    t1 := blend( (*pm)[0x11], (*pm)[0x12] )
-    t2 := blend( (*pm)[0x28], (*pm)[0x03] )
-
     build_ultra()
 
-    fmt.Println(palette_unsat_v6[0x11].B)
-    fmt.Println(t1)
-    fmt.Println(t2)
+    filter_safe_lg := make(map[uint16]bool)
+    filter_safe_lg[0x3afb] = true
+    filter_safe_lg[0x0aab] = true
 
-    fmt.Println(palette_ultra[0x11][0x12])
-    fmt.Println(palette_ultra[0x28][0x03])
+    a := [16]uint8 {
+        0x0a, 0x1a, 0x2a, 0x3a, 0x4a, 0x5a, 0x6a, 0x7a,
+        0x8a, 0x9a, 0xaa, 0xba, 0xca, 0xda, 0xea, 0xfa }
+
+    b := [16]uint8 {
+        0x0b, 0x1b, 0x2b, 0x3b, 0x4b, 0x5b, 0x6b, 0x7b,
+        0x8b, 0x9b, 0xab, 0xbb, 0xcb, 0xdb, 0xeb, 0xfb }
+
+    distill(a,b, &filter_safe_lg)
 }
 
