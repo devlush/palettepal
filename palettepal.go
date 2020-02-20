@@ -4,6 +4,8 @@ package main
 import (
     "fmt"
     "math"
+    "math/rand"
+    "time"
 )
 
 type RGB struct {
@@ -41,6 +43,19 @@ func build_ultra() {
             palette_ultra[i][j] = blend(ci, cj)
         }
     }
+}
+
+func pick_phase_pair() ([16]uint8, [16]uint8) {
+
+    phaseA := [16]uint8{}
+    phaseB := [16]uint8{}
+    for _, i := range phaseA {
+        phaseA[i] = uint8(rand.Intn(64))
+    }
+    for _, i := range phaseB {
+        phaseB[i] = uint8(rand.Intn(64))
+    }
+    return phaseA, phaseB
 }
 
 func distill(a, b [16]uint8) {
@@ -100,17 +115,13 @@ func main() {
 
     build_ultra()
 
-    sieve[0x3afb] = true
-    sieve[0x0aab] = true
+    sieve[0x0921] = true
+    sieve[0x0a05] = true
 
-    a := [16]uint8 {
-        0x0a, 0x1a, 0x2a, 0x3a, 0x4a, 0x5a, 0x6a, 0x7a,
-        0x8a, 0x9a, 0xaa, 0xba, 0xca, 0xda, 0xea, 0xfa }
-
-    b := [16]uint8 {
-        0x0b, 0x1b, 0x2b, 0x3b, 0x4b, 0x5b, 0x6b, 0x7b,
-        0x8b, 0x9b, 0xab, 0xbb, 0xcb, 0xdb, 0xeb, 0xfb }
-
-    distill(a, b)
+    rand.Seed(time.Now().UnixNano())
+    for i := 0; i < 10000; i++ {
+        a, b := pick_phase_pair()
+        distill(a, b)
+    }
 }
 
