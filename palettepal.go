@@ -46,7 +46,8 @@ func build_ultra() {
 }
 
 func pick_phase_pair() ([16]uint8, [16]uint8) {
-
+    // populate the phase palette sets by randomly selecting
+    // values found in the unsat_v6 master palette
     phaseA := [16]uint8{}
     phaseB := [16]uint8{}
     for _, i := range phaseA {
@@ -69,6 +70,7 @@ func distill(a, b [16]uint8) {
 }
 
 func rms(x, y uint8) uint8 {
+    // calculate the root mean square of two 8bit integers
     xf := float64(x)
     yf := float64(y)
 
@@ -80,6 +82,8 @@ func rms(x, y uint8) uint8 {
 }
 
 func blend(p, q RGB) RGB {
+    // pairwise blend the RGB values for
+    // two given colors using root mean square
     v := RGB{}
     v.R = rms(p.R, q.R)
     v.G = rms(p.G, q.G)
@@ -88,7 +92,8 @@ func blend(p, q RGB) RGB {
 }
 
 func yield_vps(a, b [16]uint8) [256]uint16 {
-
+    // calculate the full product of a phase pair and
+    // let the 16x16 result be known as a 'virtual palette set'
     vps := [256]uint16 {}
     for i := 0; i < 16; i++ {
         for j := 0; j < 16; j++ {
