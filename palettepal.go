@@ -10,6 +10,8 @@ type RGB struct {
     R, G, B uint8
 }
 
+var sieve = make(map[uint16]bool)
+
 var palette_unsat_v6 = []RGB {
     {107, 107, 107}, {135,  30,   0}, {150,  11,  31}, {135,  12,  59},
     { 97,  13,  89}, { 40,   5,  94}, {  0,  17,  85}, {  0,  27,  70},
@@ -41,18 +43,11 @@ func build_ultra() {
     }
 }
 
-func distill(a, b [16]uint8, filter *map[uint16]bool) {
+func distill(a, b [16]uint8) {
 
-    virt_palette := [256]uint16 {}
-    for i := 0; i < 16; i++ {
-        for j := 0; j < 16; j++ {
-            left := uint16(a[i]) << 8
-            right := uint16(b[j])
-            virt_palette[i*16+j] = left | right
-        }
-    }
-    for _, cc := range virt_palette {
-        if (*filter)[cc] {
+    vps := yield_vps(a, b)
+    for _, cc := range vps {
+        if sieve[cc] {
             fmt.Printf(" %04x\n", cc)
         }
     }
@@ -77,6 +72,19 @@ func blend(p, q RGB) RGB {
     return v
 }
 
+func yield_vps(a, b [16]uint8) [256]uint16 {
+
+    vps := [256]uint16 {}
+    for i := 0; i < 16; i++ {
+        for j := 0; j < 16; j++ {
+            left := uint16(a[i]) << 8
+            right := uint16(b[j])
+            vps[i*16+j] = left | right
+        }
+    }
+    return vps
+}
+
 func print_master() {
     fmt.Println(palette_unsat_v6[0x11])
     for i := 0; i < 4; i++ {
@@ -92,9 +100,8 @@ func main() {
 
     build_ultra()
 
-    filter_safe_lg := make(map[uint16]bool)
-    filter_safe_lg[0x3afb] = true
-    filter_safe_lg[0x0aab] = true
+    sieve[0x3afb] = true
+    sieve[0x0aab] = true
 
     a := [16]uint8 {
         0x0a, 0x1a, 0x2a, 0x3a, 0x4a, 0x5a, 0x6a, 0x7a,
@@ -104,6 +111,6 @@ func main() {
         0x0b, 0x1b, 0x2b, 0x3b, 0x4b, 0x5b, 0x6b, 0x7b,
         0x8b, 0x9b, 0xab, 0xbb, 0xcb, 0xdb, 0xeb, 0xfb }
 
-    distill(a,b, &filter_safe_lg)
+    distill(a, b)
 }
 
