@@ -130,6 +130,43 @@ func yield_vps(a, b *[16]uint8) [256]uint16 {
     return vps
 }
 
+func print_vps(vps *[256]uint16) {
+    // helper function for printing the color codes
+    // composing a virtual palette set (16x16)
+    fmt.Printf("\n vps:")
+    for i := 0; i < 16; i++ {
+        for j := 0; j < 16; j++ {
+            fmt.Printf(" %04x", vps[i*16+j])
+        }
+        fmt.Printf("\n     ")
+    }
+    fmt.Println("\n")
+}
+
+func print_phase_pair(a, b *[16]uint8) {
+    // helper function for printing the color codes
+    // composing a phase pair (A 4x4, B 4x4)
+    fmt.Printf("\n A:")
+    for j := 0; j < 4; j++ {
+        fmt.Printf(" %02x", a[j])
+    }
+    fmt.Printf("   B:")
+    for j := 0; j < 4; j++ {
+        fmt.Printf(" %02x", b[j])
+    }
+    for i := 1; i < 4; i++ {
+        fmt.Printf("\n   ")
+        for j := 0; j < 4; j++ {
+            fmt.Printf(" %02x", a[i*4+j])
+        }
+        fmt.Printf("     ")
+        for j := 0; j < 4; j++ {
+            fmt.Printf(" %02x", b[i*4+j])
+        }
+    }
+    fmt.Println("\n")
+}
+
 func print_master() {
     fmt.Println(palette_unsat_v6[0x11])
     for i := 0; i < 4; i++ {
@@ -153,6 +190,7 @@ func main() {
     rand.Seed(time.Now().UnixNano())
     for i := 0; i < 10000; i++ {
         a, b := pick_phase_pair()
+        print_phase_pair(&a, &b)
         distill(&a, &b)
     }
 }
