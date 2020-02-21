@@ -84,7 +84,7 @@ func pick_phase_pair() ([16]uint8, [16]uint8) {
     return phaseA, phaseB
 }
 
-func distill(a, b [16]uint8) {
+func distill(a, b *[16]uint8) {
 
     vps := yield_vps(a, b)
     for _, cc := range vps {
@@ -116,14 +116,14 @@ func blend(p, q RGB) RGB {
     return v
 }
 
-func yield_vps(a, b [16]uint8) [256]uint16 {
+func yield_vps(a, b *[16]uint8) [256]uint16 {
     // calculate the full product of a phase pair and
     // let the 16x16 result be known as a 'virtual palette set'
     vps := [256]uint16 {}
     for i := 0; i < 16; i++ {
         for j := 0; j < 16; j++ {
-            left := uint16(a[i]) << 8
-            right := uint16(b[j])
+            left := uint16((*a)[i]) << 8
+            right := uint16((*b)[j])
             vps[i*16+j] = left | right
         }
     }
@@ -153,7 +153,7 @@ func main() {
     rand.Seed(time.Now().UnixNano())
     for i := 0; i < 10000; i++ {
         a, b := pick_phase_pair()
-        distill(a, b)
+        distill(&a, &b)
     }
 }
 
