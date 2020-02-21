@@ -6,6 +6,10 @@ import (
     "math"
     "math/rand"
     "time"
+    "os"
+    "encoding/csv"
+    "log"
+    "strconv"
 )
 
 type RGB struct {
@@ -41,6 +45,27 @@ func build_ultra() {
     for i, ci := range palette_unsat_v6 {
         for j, cj := range palette_unsat_v6 {
             palette_ultra[i][j] = blend(ci, cj)
+        }
+    }
+}
+
+func load_sieve_csv(file string) {
+    // parse the given csv file and populate the sieve
+    // with these colors values found in the ultra palette
+    fd, err := os.Open(file)
+    if err != nil {
+        log.Fatalln("Unable to open csv file", err)
+    }
+    defer fd.Close()
+
+    records, err := csv.NewReader(fd).ReadAll()
+    if err != nil {
+        log.Fatalln("Unable to parse csv file", err)
+    }
+
+    for _, record := range records {
+        if cc, err := strconv.ParseUint(record[0], 16, 16); err == nil {
+            sieve[uint16(cc)] = true
         }
     }
 }
@@ -122,6 +147,8 @@ func main() {
 
     sieve[0x0921] = true
     sieve[0x0a05] = true
+
+    load_sieve_csv("background.csv")
 
     rand.Seed(time.Now().UnixNano())
     for i := 0; i < 10000; i++ {
