@@ -75,10 +75,10 @@ func pick_phase_pair() ([16]uint8, [16]uint8) {
     // values found in the unsat_v6 master palette
     phaseA := [16]uint8{}
     phaseB := [16]uint8{}
-    for _, i := range phaseA {
+    for i := range phaseA {
         phaseA[i] = uint8(rand.Intn(64))
     }
-    for _, i := range phaseB {
+    for i := range phaseB {
         phaseB[i] = uint8(rand.Intn(64))
     }
     return phaseA, phaseB
