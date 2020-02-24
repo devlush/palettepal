@@ -10,6 +10,7 @@ import (
     "encoding/csv"
     "log"
     "strconv"
+    "strings"
 )
 
 type RGB struct {
@@ -49,7 +50,7 @@ func build_ultra() {
     }
 }
 
-func load_sieve_csv(file string) {
+func load_sieve_csv(file string, rank_edict string) {
     // parse the given csv file and populate the sieve
     // with these colors values found in the ultra palette
     fd, err := os.Open(file)
@@ -63,10 +64,18 @@ func load_sieve_csv(file string) {
         log.Fatalln("Unable to parse csv file", err)
     }
 
+    rank_map := make(map[string]uint8)
+    rank_map["green"] = 0x04
+    rank_map["yellow"] = 0x06
+
+    rew := rank_map[rank_edict]  // rew: rank edict weight
+
     for _, record := range records {
         if cc, err := strconv.ParseUint(record[0], 16, 16); err == nil {
-            sieve[uint16(cc)] = true
-        }
+            if rr := strings.ToLower(record[1]); rank_map[rr] <= rew {
+                sieve[uint16(cc)] = true
+            }
+        }  // cc: color code, rr: render rank
     }
 }
 
@@ -185,7 +194,7 @@ func main() {
     sieve[0x0921] = true
     sieve[0x0a05] = true
 
-    load_sieve_csv("background.csv")
+    load_sieve_csv("background.csv", "yellow")
 
     rand.Seed(time.Now().UnixNano())
     for i := 0; i < 10000; i++ {
