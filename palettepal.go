@@ -99,16 +99,6 @@ func pick_phase_pair() ([16]uint8, [16]uint8) {
     return phaseA, phaseB
 }
 
-func distill(a, b *[16]uint8) {
-
-    vps := yield_vps_full(a, b)
-    for _, cc := range vps {
-        if sieve[cc] {
-            fmt.Printf(" %04x\n", cc)
-        }
-    }
-}
-
 func rms(x, y uint8) uint8 {
     // calculate the root mean square of two 8bit integers
     xf := float64(x)
@@ -213,6 +203,20 @@ func print_master() {
     }
 }
 
+func appraise_specimen(specimen *Specimen) {
+
+    specimen.Score["colors_available"] = 0
+    specimen.Score["contrast_amount"] = 0
+    specimen.Score["largest_virtual_palette"] = 0
+
+    vps_full := yield_vps_full(specimen.PhaseA, specimen.PhaseB)
+    for _, cc := range vps_full {
+        if sieve[cc] {
+            specimen.Score["colors_available"] += 1
+        }
+    }
+}
+
 func main() {
 
     build_ultra()
@@ -226,8 +230,8 @@ func main() {
     for i := 0; i < 10000; i++ {
         a, b := pick_phase_pair()
         print_phase_pair(&a, &b)
-        distill(&a, &b)
         x := yield_specimen(&a, &b)
+        appraise_specimen(x)
         fmt.Println(x)
     }
 }
