@@ -17,6 +17,12 @@ type RGB struct {
     R, G, B uint8
 }
 
+type Specimen struct {
+    PhaseA, PhaseB *[16]uint8
+    Ensemble string
+    Score map[string]int
+}
+
 var sieve = make(map[uint16]bool)
 
 var palette_unsat_v6 = []RGB {
@@ -125,6 +131,26 @@ func blend(p, q RGB) RGB {
     return v
 }
 
+func yield_specimen(a, b *[16]uint8) *Specimen {
+    // initialize a specimen wrapper given a phase pair
+    specimen := Specimen{}
+    specimen.PhaseA = a
+    specimen.PhaseB = b
+    specimen.Score = make(map[string]int)
+
+    var ensemble string = ""
+    for _, cc := range *a {
+        ensemble += fmt.Sprintf("%02x", cc)
+    }
+
+    for _, cc := range *b {
+        ensemble += fmt.Sprintf("%02x", cc)
+    }
+
+    specimen.Ensemble = ensemble
+    return &specimen
+}
+
 func yield_vps_full(a, b *[16]uint8) [256]uint16 {
     // calculate the full product of a phase pair and
     // let the 16x16 result be known as a 'virtual palette set'
@@ -201,6 +227,8 @@ func main() {
         a, b := pick_phase_pair()
         print_phase_pair(&a, &b)
         distill(&a, &b)
+        x := yield_specimen(&a, &b)
+        fmt.Println(x)
     }
 }
 
