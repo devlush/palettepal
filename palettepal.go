@@ -8,6 +8,7 @@ import (
     "time"
     "os"
     "encoding/csv"
+    "encoding/hex"
     "log"
     "strconv"
     "strings"
@@ -128,14 +129,8 @@ func yield_specimen(a, b *[16]uint8) *Specimen {
     specimen.PhaseB = b
     specimen.Score = make(map[string]int)
 
-    var ensemble string = ""
-    for _, cc := range *a {
-        ensemble += fmt.Sprintf("%02x", cc)
-    }
-
-    for _, cc := range *b {
-        ensemble += fmt.Sprintf("%02x", cc)
-    }
+    ensemble := fmt.Sprintf("%s", hex.EncodeToString([]byte( (*a)[:] )))
+    ensemble += fmt.Sprintf("%s", hex.EncodeToString([]byte( (*b)[:] )))
 
     specimen.Ensemble = ensemble
     return &specimen
@@ -247,6 +242,7 @@ func main() {
         if is_worthy {
             print_phase_pair(x.PhaseA, x.PhaseB)
             fmt.Println(x.Score["colors_available"])
+            fmt.Println(x.Ensemble)
         }
     }
 }
