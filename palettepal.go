@@ -95,7 +95,7 @@ func pick_phase_pair() ([16]uint8, [16]uint8) {
 
 func distill(a, b *[16]uint8) {
 
-    vps := yield_vps(a, b)
+    vps := yield_vps_full(a, b)
     for _, cc := range vps {
         if sieve[cc] {
             fmt.Printf(" %04x\n", cc)
@@ -125,7 +125,7 @@ func blend(p, q RGB) RGB {
     return v
 }
 
-func yield_vps(a, b *[16]uint8) [256]uint16 {
+func yield_vps_full(a, b *[16]uint8) [256]uint16 {
     // calculate the full product of a phase pair and
     // let the 16x16 result be known as a 'virtual palette set'
     vps := [256]uint16 {}
