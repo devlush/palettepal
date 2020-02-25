@@ -217,6 +217,18 @@ func appraise_specimen(specimen *Specimen) {
     }
 }
 
+func adjudicate_specimen(specimen *Specimen) bool {
+    // judge a specimen according to criteria specified
+    // and determine whether it should be saved
+
+    // if the number of available colors meets
+    // a threshold, return affirmative
+    if specimen.Score["colors_available"] > 22 {
+        return true
+    }
+    return false
+}
+
 func main() {
 
     build_ultra()
@@ -229,10 +241,13 @@ func main() {
     rand.Seed(time.Now().UnixNano())
     for i := 0; i < 10000; i++ {
         a, b := pick_phase_pair()
-        print_phase_pair(&a, &b)
         x := yield_specimen(&a, &b)
         appraise_specimen(x)
-        fmt.Println(x)
+        is_worthy := adjudicate_specimen(x)
+        if is_worthy {
+            print_phase_pair(x.PhaseA, x.PhaseB)
+            fmt.Println(x.Score["colors_available"])
+        }
     }
 }
 
