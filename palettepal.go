@@ -26,6 +26,8 @@ type Specimen struct {
 
 var sieve = make(map[uint16]bool)
 
+var run_id string
+
 var palette_unsat_v6 = []RGB {
     {107, 107, 107}, {135,  30,   0}, {150,  11,  31}, {135,  12,  59},
     { 97,  13,  89}, { 40,   5,  94}, {  0,  17,  85}, {  0,  27,  70},
@@ -234,6 +236,11 @@ func main() {
     load_sieve_csv("background.csv", "yellow")
 
     rand.Seed(time.Now().UnixNano())
+
+    bytes := make([]byte, 3)
+    rand.Read(bytes)
+    run_id = strings.ToUpper(hex.EncodeToString(bytes))
+
     for i := 0; i < 10000; i++ {
         a, b := pick_phase_pair()
         x := yield_specimen(&a, &b)
