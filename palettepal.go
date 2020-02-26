@@ -200,14 +200,14 @@ func print_master() {
 
 func appraise_specimen(specimen *Specimen) {
 
-    specimen.Score["colors_available"] = 0
-    specimen.Score["contrast_amount"] = 0
-    specimen.Score["largest_virtual_palette"] = 0
+    specimen.Score["color_count"] = 0
+    specimen.Score["contrast_amt"] = 0
+    specimen.Score["max_vp_size"] = 0
 
     vps_full := yield_vps_full(specimen.PhaseA, specimen.PhaseB)
     for _, cc := range vps_full {
         if sieve[cc] {
-            specimen.Score["colors_available"] += 1
+            specimen.Score["color_count"] += 1
         }
     }
 }
@@ -218,7 +218,7 @@ func adjudicate_specimen(specimen *Specimen) bool {
 
     // if the number of available colors meets
     // a threshold, return affirmative
-    if specimen.Score["colors_available"] > 22 {
+    if specimen.Score["color_count"] > 22 {
         return true
     }
     return false
@@ -241,7 +241,7 @@ func main() {
         is_worthy := adjudicate_specimen(x)
         if is_worthy {
             print_phase_pair(x.PhaseA, x.PhaseB)
-            fmt.Println(x.Score["colors_available"])
+            fmt.Println(x.Score["color_count"])
             fmt.Println(x.Ensemble)
         }
     }
