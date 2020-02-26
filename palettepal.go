@@ -12,6 +12,15 @@ import (
     "log"
     "strconv"
     "strings"
+    "database/sql"
+    _ "github.com/lib/pq"
+)
+
+const (
+    host     = "172.18.0.3"
+    user     = "postgres"
+    password = "example"
+    dbname   = "palettepal"
 )
 
 type RGB struct {
@@ -25,7 +34,8 @@ type Specimen struct {
 }
 
 var filter = make(map[uint16]bool)
-
+var filter_desc string
+var target_desc string
 var run_id string
 
 var palette_unsat_v6 = []RGB {
@@ -122,6 +132,49 @@ func blend(p, q RGB) RGB {
     v.G = rms(p.G, q.G)
     v.B = rms(p.B, q.B)
     return v
+}
+
+func store_specimen(specimen *Specimen) {
+    connStr := fmt.Sprintf(
+        "dbname=" + dbname +
+            " host=" + host + " sslmode=disable" +
+            " user=" + user + " password=" + password)
+    db, err := sql.Open("postgres", connStr)
+    if err != nil {
+        panic(err)
+    }
+    defer db.Close()
+
+    statement := `
+    INSERT INTO mc_result (
+        color_count,
+        max_vp_size,
+        filter_desc,
+        target_desc,
+        ensemble,
+        run_id,
+        worker_id,
+        duration,
+        rounds
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    RETURNING id`
+
+    id := 0
+    if err = db.QueryRow(statement,
+        specimen.Score["color_count"],
+        specimen.Score["max_vp_size"],
+        filter_desc,
+        target_desc,
+        specimen.Ensemble,
+        run_id,
+        "testbed_1",
+        20,
+        50,
+    ).Scan(&id); err != nil {
+        panic(err)
+    }
+    fmt.Println("specimen saved, record_id: ", id)
 }
 
 func yield_specimen(a, b *[16]uint8) *Specimen {
@@ -229,8 +282,10 @@ func adjudicate_specimen(specimen *Specimen) bool {
 func main() {
 
     build_ultra()
-
     load_filter_csv("background.csv", "yellow")
+
+    filter_desc = "lg_risky"
+    target_desc = "color_count > 32"
 
     rand.Seed(time.Now().UnixNano())
 
@@ -245,9 +300,9 @@ func main() {
         is_worthy := adjudicate_specimen(x)
         if is_worthy {
             print_phase_pair(x.PhaseA, x.PhaseB)
-            fmt.Println(x.Score["color_count"])
-            fmt.Println(x.Ensemble)
+            store_specimen(x)
         }
     }
+    fmt.Println()
 }
 
