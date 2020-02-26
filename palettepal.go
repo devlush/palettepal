@@ -24,7 +24,7 @@ type Specimen struct {
     Score map[string]int
 }
 
-var sieve = make(map[uint16]bool)
+var filter = make(map[uint16]bool)
 
 var run_id string
 
@@ -59,8 +59,8 @@ func build_ultra() {
     }
 }
 
-func load_sieve_csv(file string, rank_edict string) {
-    // parse the given csv file and populate the sieve
+func load_filter_csv(file string, rank_edict string) {
+    // parse the given csv file and populate the filter
     // with these colors values found in the ultra palette
     fd, err := os.Open(file)
     if err != nil {
@@ -82,7 +82,7 @@ func load_sieve_csv(file string, rank_edict string) {
     for _, record := range records {
         if cc, err := strconv.ParseUint(record[0], 16, 16); err == nil {
             if rr := strings.ToLower(record[1]); rank_map[rr] <= rew {
-                sieve[uint16(cc)] = true
+                filter[uint16(cc)] = true
             }
         }  // cc: color code, rr: render rank
     }
@@ -208,7 +208,7 @@ func appraise_specimen(specimen *Specimen) {
 
     vps_full := yield_vps_full(specimen.PhaseA, specimen.PhaseB)
     for _, cc := range vps_full {
-        if sieve[cc] {
+        if filter[cc] {
             specimen.Score["color_count"] += 1
         }
     }
@@ -230,7 +230,7 @@ func main() {
 
     build_ultra()
 
-    load_sieve_csv("background.csv", "yellow")
+    load_filter_csv("background.csv", "yellow")
 
     rand.Seed(time.Now().UnixNano())
 
