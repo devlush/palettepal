@@ -230,9 +230,6 @@ func main() {
 
     build_ultra()
 
-    sieve[0x0921] = true
-    sieve[0x0a05] = true
-
     load_sieve_csv("background.csv", "yellow")
 
     rand.Seed(time.Now().UnixNano())
