@@ -284,7 +284,7 @@ func adjudicate_specimen(specimen *Specimen) bool {
 func main() {
 
     build_ultra()
-    load_filter_csv("background.csv", "yellow")
+    load_filter_csv("filter.csv", "yellow")
 
     filter_desc = "lg_risky"
     target_desc = "color_count > 22"
