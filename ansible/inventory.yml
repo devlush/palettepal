@@ -1,0 +1,13 @@
+---
+
+all:
+  vars:
+    palettepal_filter_csv: background.csv
+    palettepal_filter_desc: lg_risky
+    palettepal_filter_rank_edict: yellow
+    palettepal_iterations: 10000
+    palettepal_worker_count: 8
+
+  hosts:
+    cruncher[01:17]:
+

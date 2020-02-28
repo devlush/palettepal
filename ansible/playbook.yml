@@ -1,0 +1,27 @@
+---
+
+- hosts: all
+  tasks:
+    - name: kill existing workers, cleanup runtime dir
+      shell: |
+        pkill palettepal; echo
+        rm -rf /tmp/palettepal-runtime-*
+
+    - name: push filters
+      copy:
+        src: ../filters/{{ palettepal_filter_csv }}
+        dest: /tmp/palettepal-runtime-{{ palettepal_build_id }}/filter.csv
+
+    - name: push runtime
+      copy:
+        src: ../build/palettepal
+        dest: /tmp/palettepal-runtime-{{ palettepal_build_id }}/palettepal
+        mode: '0775'
+
+    - name: spawn new workers
+      shell: "(cd /tmp/palettepal-runtime-{{ palettepal_build_id }}; ./palettepal {{ palettepal_run_id }} >/dev/null 2>&1 &)"
+      async: 10
+      poll: 0
+
+# go run palettepal.go ABC123 10000 8 yellow "large riskier"
+

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# close stderr
+exec 2>&-
+
+export RUN_ID=$(hexdump -n 3 -v -e '3/1 "%02X" "\n"' /dev/random)
+export BUILD_ID=$(git diff-index --quiet HEAD -- && git rev-parse --short HEAD)
+
+if [[ -z $BUILD_ID ]]; then
+  export BUILD_ID="black-$(date +%d%b)"
+fi
+
+# repoen stderr
+exec 2>&0
+
+mkdir -p ./runtime
+go build -o runtime/palettepal src/palettepal.go
+pushd ansible >/dev/null
+ansible-playbook ./playbook.yml \
+  --inventory inventory.yml \
+  --extra-vars " \
+  	ansible_ssh_user=root \
+    palettepal_run_id=$RUN_ID \
+    palettepal_build_id=$BUILD_ID \
+  "
+popd  >/dev/null
+rm -rf ./runtime
+
+echo
+echo
+echo "  build_id: $BUILD_ID"
+echo
+echo "    run_id: $RUN_ID"
+echo
+echo
+
+
+# https://stackoverflow.com/questions/3878624/how-do-i-programmatically-determine-if-there-are-uncommitted-changes
+# git diff-index --quiet HEAD --
+
+# https://stackoverflow.com/questions/31448445/git-log-show-one-commit-id-only
+# git rev-parse --short HEAD
+
