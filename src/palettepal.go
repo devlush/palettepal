@@ -291,7 +291,7 @@ func main() {
 
     bytes := make([]byte, 3)
     rand.Read(bytes)
-    run_id = strings.ToUpper(hex.EncodeToString(bytes))
+    run_id = os.Args[1]
 
     for i := 0; i < 10000; i++ {
         a, b := pick_phase_pair()
