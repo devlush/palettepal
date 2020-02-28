@@ -186,8 +186,8 @@ func yield_specimen(a, b *[16]uint8) *Specimen {
     specimen.PhaseB = b
     specimen.Score = make(map[string]int)
 
-    ensemble := fmt.Sprintf("%s", hex.EncodeToString([]byte( (*a)[:] )))
-    ensemble += fmt.Sprintf("%s", hex.EncodeToString([]byte( (*b)[:] )))
+    ensemble := fmt.Sprintf("%s", strings.ToUpper(hex.EncodeToString([]byte( (*a)[:] ))))
+    ensemble += fmt.Sprintf("%s", strings.ToUpper(hex.EncodeToString([]byte( (*b)[:] ))))
 
     specimen.Ensemble = ensemble
     return &specimen
