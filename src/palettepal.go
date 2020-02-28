@@ -36,6 +36,7 @@ type Specimen struct {
 var filter = make(map[uint16]bool)
 var filter_desc string
 var target_desc string
+var worker_count int64
 var rounds_total int64
 var run_id string
 
@@ -294,6 +295,7 @@ func main() {
     rand.Read(bytes)
     run_id = os.Args[1]
     rounds_total, _ = strconv.ParseInt(os.Args[2], 10, 64)
+    worker_count, _ = strconv.ParseInt(os.Args[3], 10, 64)
 
     for i := int64(1); i < rounds_total; i++ {
         a, b := pick_phase_pair()
