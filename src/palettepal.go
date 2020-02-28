@@ -284,9 +284,7 @@ func adjudicate_specimen(specimen *Specimen) bool {
 func main() {
 
     build_ultra()
-    load_filter_csv("filter.csv", "yellow")
 
-    filter_desc = "lg_risky"
     target_desc = "color_count > 22"
 
     rand.Seed(time.Now().UnixNano())
@@ -296,6 +294,10 @@ func main() {
     run_id = os.Args[1]
     rounds_total, _ = strconv.ParseInt(os.Args[2], 10, 64)
     worker_count, _ = strconv.ParseInt(os.Args[3], 10, 64)
+
+    filter_rank_edict := os.Args[4]
+    filter_desc = os.Args[5]
+    load_filter_csv("filter.csv", filter_rank_edict)
 
     for i := int64(1); i < rounds_total; i++ {
         a, b := pick_phase_pair()
