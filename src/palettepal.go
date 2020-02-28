@@ -36,6 +36,7 @@ type Specimen struct {
 var filter = make(map[uint16]bool)
 var filter_desc string
 var target_desc string
+var rounds_total int64
 var run_id string
 
 var palette_unsat_v6 = []RGB {
@@ -292,8 +293,9 @@ func main() {
     bytes := make([]byte, 3)
     rand.Read(bytes)
     run_id = os.Args[1]
+    rounds_total, _ = strconv.ParseInt(os.Args[2], 10, 64)
 
-    for i := 0; i < 10000; i++ {
+    for i := int64(1); i < rounds_total; i++ {
         a, b := pick_phase_pair()
         x := yield_specimen(&a, &b)
         appraise_specimen(x)
