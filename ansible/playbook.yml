@@ -19,7 +19,7 @@
         mode: '0775'
 
     - name: spawn new workers
-      shell: "(cd /tmp/palettepal-runtime-{{ palettepal_build_id }}; ./palettepal {{ palettepal_run_id }} >/dev/null 2>&1 &)"
+      shell: "(cd /tmp/palettepal-runtime-{{ palettepal_build_id }}; ./palettepal {{ palettepal_run_id }} {{ palettepal_iterations }} {{ palettepal_worker_count }} {{ palettepal_filter_rank_edict }} '{{ palettepal_filter_desc }}' >/dev/null 2>&1 &)"
       async: 10
       poll: 0
 
