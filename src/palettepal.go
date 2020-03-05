@@ -17,7 +17,8 @@ import (
 )
 
 const (
-    host     = "172.18.0.3"
+    //host     = "172.18.0.3"
+    host     = "repono"
     user     = "postgres"
     password = "example"
     dbname   = "palettepal"
