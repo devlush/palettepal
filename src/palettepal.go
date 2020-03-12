@@ -40,8 +40,9 @@ var gerr error
 var filter = make(map[uint16]bool)
 var filter_desc string
 var target_desc string
-var worker_count int64
 var rounds_total int64
+var worker_count int64
+var hostname string
 var run_id string
 
 var palette_unsat_v6 = []RGB {
@@ -169,7 +170,9 @@ func blend(p, q RGB) RGB {
     return v
 }
 
-func store_specimen(specimen *Specimen) {
+func store_specimen(specimen *Specimen, worker_num int64) {
+
+    worker_id := fmt.Sprintf("%s_%d", hostname, worker_num)
     connStr := fmt.Sprintf(
         "dbname=" + dbname +
             " host=" + host + " sslmode=disable" +
@@ -203,7 +206,7 @@ func store_specimen(specimen *Specimen) {
         target_desc,
         specimen.Ensemble,
         run_id,
-        "testbed_1",
+        worker_id,
         20,
         50,
     ).Scan(&id); err != nil {
@@ -310,7 +313,7 @@ func adjudicate_specimen(specimen *Specimen) bool {
 
     // if the number of available colors meets
     // a threshold, return affirmative
-    if specimen.Score["color_count"] > 22 {
+    if specimen.Score["color_count"] > 17 {
         return true
     }
     return false
@@ -332,11 +335,12 @@ func main() {
     
     build_ultra()
 
-    target_desc = "color_count > 22"
+    target_desc = "color_count > 17"
 
     rand.Seed(time.Now().UnixNano())
 
     bytes := make([]byte, 3)
+    hostname, _ = os.Hostname()
     rand.Read(bytes)
     run_id = os.Args[1]
     rounds_total, _ = strconv.ParseInt(os.Args[2], 10, 64)
@@ -355,7 +359,7 @@ func main() {
                 is_worthy := adjudicate_specimen(x)
                 if is_worthy {
                     print_phase_pair(x.PhaseA, x.PhaseB)
-                    store_specimen(x)
+                    store_specimen(x, i)
                 }
             }
         } ()
