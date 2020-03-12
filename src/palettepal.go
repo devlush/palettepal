@@ -346,15 +346,24 @@ func main() {
     filter_desc = os.Args[5]
     load_filter_csv("filter.csv", filter_rank_edict)
 
+    ch := make(chan *Specimen)
+
+    for i := int64(0); i < worker_count; i++ {
+        go func () {
+            for x := range ch {
+                appraise_specimen(x)
+                is_worthy := adjudicate_specimen(x)
+                if is_worthy {
+                    print_phase_pair(x.PhaseA, x.PhaseB)
+                    store_specimen(x)
+                }
+            }
+        } ()
+    }
+
     for i := int64(1); i < rounds_total; i++ {
         a, b := pick_phase_pair()
-        x := yield_specimen(&a, &b)
-        appraise_specimen(x)
-        is_worthy := adjudicate_specimen(x)
-        if is_worthy {
-            print_phase_pair(x.PhaseA, x.PhaseB)
-            store_specimen(x)
-        }
+        ch <- yield_specimen(&a, &b)
     }
     fmt.Println()
     println_to_log("Monte Colore process terminating normally...")
