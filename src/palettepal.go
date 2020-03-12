@@ -14,10 +14,12 @@ import (
     "strings"
     "database/sql"
     _ "github.com/lib/pq"
+    //"io/ioutil"
 )
 
 const (
-    host     = "172.18.0.3"
+    //host     = "172.18.0.3"
+    host     = "repono"
     user     = "postgres"
     password = "example"
     dbname   = "palettepal"
@@ -33,6 +35,8 @@ type Specimen struct {
     Score map[string]int
 }
 
+var log_file *os.File
+var gerr error
 var filter = make(map[uint16]bool)
 var filter_desc string
 var target_desc string
@@ -312,8 +316,20 @@ func adjudicate_specimen(specimen *Specimen) bool {
     return false
 }
 
-func main() {
+func println_to_log(line_to_log string) {
+    log_file.Write([]byte(line_to_log))
+    log_file.Write([]byte("\n"))
+}
 
+func main() {
+    // RTL: Improve error handling in logging functionality.
+    log_file, gerr = os.OpenFile("montecolore.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+    if gerr != nil {
+        log.Fatal(gerr)
+    }
+    println_to_log("Monte Colore process starting...")
+
+    
     build_ultra()
 
     target_desc = "color_count > 22"
@@ -341,5 +357,7 @@ func main() {
         }
     }
     fmt.Println()
+    println_to_log("Monte Colore process terminating normally...")
+
 }
 
