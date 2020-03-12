@@ -105,12 +105,41 @@ func pick_phase_pair() ([16]uint8, [16]uint8) {
     // values found in the unsat_v6 master palette
     phaseA := [16]uint8{}
     phaseB := [16]uint8{}
-    for i := range phaseA {
-        phaseA[i] = uint8(rand.Intn(64))
-    }
-    for i := range phaseB {
-        phaseB[i] = uint8(rand.Intn(64))
-    }
+
+    phaseA[0] = uint8(rand.Intn(64))
+    phaseA[1] = uint8(rand.Intn(64))
+    phaseA[2] = uint8(rand.Intn(64))
+    phaseA[3] = uint8(rand.Intn(64))
+    phaseA[4] = phaseA[0]
+    phaseA[5] = uint8(rand.Intn(64))
+    phaseA[6] = uint8(rand.Intn(64))
+    phaseA[7] = uint8(rand.Intn(64))
+    phaseA[8] = phaseA[0]
+    phaseA[9] = uint8(rand.Intn(64))
+    phaseA[10] = uint8(rand.Intn(64))
+    phaseA[11] = uint8(rand.Intn(64))
+    phaseA[12] = phaseA[0]
+    phaseA[13] = uint8(rand.Intn(64))
+    phaseA[14] = uint8(rand.Intn(64))
+    phaseA[15] = uint8(rand.Intn(64))
+
+    phaseB[0] = uint8(rand.Intn(64))
+    phaseB[1] = uint8(rand.Intn(64))
+    phaseB[2] = uint8(rand.Intn(64))
+    phaseB[3] = uint8(rand.Intn(64))
+    phaseB[4] = phaseB[0]
+    phaseB[5] = uint8(rand.Intn(64))
+    phaseB[6] = uint8(rand.Intn(64))
+    phaseB[7] = uint8(rand.Intn(64))
+    phaseB[8] = phaseB[0]
+    phaseB[9] = uint8(rand.Intn(64))
+    phaseB[10] = uint8(rand.Intn(64))
+    phaseB[11] = uint8(rand.Intn(64))
+    phaseB[12] = phaseB[0]
+    phaseB[13] = uint8(rand.Intn(64))
+    phaseB[14] = uint8(rand.Intn(64))
+    phaseB[15] = uint8(rand.Intn(64))
+
     return phaseA, phaseB
 }
 
@@ -260,12 +289,14 @@ func appraise_specimen(specimen *Specimen) {
     specimen.Score["color_count"] = 0
     specimen.Score["contrast_amt"] = 0
     specimen.Score["max_vp_size"] = 0
+    unique_colors := make(map[uint16]bool)
 
     vps_full := yield_vps_full(specimen.PhaseA, specimen.PhaseB)
     for _, cc := range vps_full {
-        if filter[cc] {
+        if filter[cc] && !unique_colors[cc] {
             specimen.Score["color_count"] += 1
         }
+        unique_colors[cc] = true
     }
 }
 
