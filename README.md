@@ -14,7 +14,7 @@ Docker compose files are included for running the postgres database on the contr
 
 ```
 [devlush@beowulf palettepal]$ cd ./docker
-[devlush@beowulf palettepal]$ docker-compose
+[devlush@beowulf palettepal]$ docker-compose -f db-fullstack.yml up
 
 ```
 
